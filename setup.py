@@ -11,7 +11,7 @@ description = Path(__file__).parent.joinpath(PACKAGE_DIR, "README.md").open(enco
 version = "0.1"
 
 with requirements.open() as file:
-    dependencies = [line.rstrip() for line in file]
+    dependencies = [line.rstrip().split("~=")[0] for line in file]
 
 
 setup(
