@@ -1,11 +1,13 @@
 # This file contains experimental modules
+from pathlib import Path
 
 import numpy as np
+import sys
 import torch
 import torch.nn as nn
 
-from models.common import Conv, DWConv
-from utils.google_utils import attempt_download
+from .common import Conv, DWConv
+from yolov5_face.utils.google_utils import attempt_download
 
 
 class CrossConv(nn.Module):
@@ -111,12 +113,15 @@ class Ensemble(nn.ModuleList):
 
 
 def attempt_load(weights, map_location=None):
+    sys.path.append(str(Path(__file__).resolve().parent.parent))
     # Loads an ensemble of models weights=[a,b,c] or a single model weights=[a] or weights=a
     model = Ensemble()
     for w in weights if isinstance(weights, list) else [weights]:
         attempt_download(w)
-        model.append(torch.load(w, map_location=map_location)['model'].float().fuse().eval())  # load FP32 model
-
+        torch_load = torch.load(w, map_location=map_location)
+        _model = torch_load['model'].float().fuse().eval()
+        model.append(_model)  # load FP32 model
+    sys.path.pop()
     # Compatibility updates
     for m in model.modules():
         if type(m) in [nn.Hardswish, nn.LeakyReLU, nn.ReLU, nn.ReLU6, nn.SiLU]:
