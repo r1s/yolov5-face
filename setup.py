@@ -8,7 +8,7 @@ PACKAGE_DIR = "yolov5_face"
 readme = Path(__file__).parent.joinpath(PACKAGE_DIR, "README.md")
 requirements = Path(__file__).parent.joinpath("requirements.txt")
 description = "yolov5-face wrapper"
-version = "0.1"
+version = "0.1.1"
 
 with requirements.open() as file:
     dependencies = [line.rstrip().split("~=")[0] for line in file]
